@@ -259,6 +259,61 @@
             
             box.innerText = msg;
         }
+        // Local state simulating the backend
+let localOtpStore = null;
+
+function handleAuth(action) {
+    const email = document.getElementById('auth-email').value;
+    if (!email) {
+        showStatus("Please enter an email address.", "error");
+        return;
+    }
+    document.getElementById('user-display').innerText = email;
+    document.getElementById('auth-gate').classList.add('hidden');
+    document.getElementById('protected-dashboard').classList.remove('hidden');
+    showStatus(`${action} successful! Welcome.`, "success");
+}
+
+function logout() {
+    document.getElementById('protected-dashboard').classList.add('hidden');
+    document.getElementById('auth-gate').classList.remove('hidden');
+    showStatus("Logged out successfully.", "success");
+}
+
+function requestNewOtp() {
+    // Generate a random 6-digit code locally
+    localOtpStore = Math.floor(100000 + Math.random() * 900000).toString();
+    document.getElementById('generated-code').innerText = localOtpStore;
+    showStatus("New verification code generated.", "success");
+}
+
+function verifyOtpCode() {
+    const inputVal = document.getElementById('otp-input').value.trim();
+    if (!inputVal) {
+        showStatus("Please enter a code.", "error");
+        return;
+    }
+
+    if (localOtpStore && inputVal === localOtpStore) {
+        localOtpStore = null; // Single-use OTP
+        showStatus("Authorization successful! Code verified.", "success");
+    } else {
+        showStatus("Invalid or expired authorization code.", "error");
+    }
+}
+
+function showStatus(msg, type) {
+    const box = document.getElementById('status-box');
+    box.classList.remove('hidden', 'bg-emerald-100', 'border-emerald-300', 'text-emerald-900', 'bg-rose-100', 'border-rose-300', 'text-rose-900');
+    
+    if (type === 'success') {
+        box.classList.add('bg-emerald-100', 'border-emerald-300', 'text-emerald-900');
+    } else {
+        box.classList.add('bg-rose-100', 'border-rose-300', 'text-rose-900');
+    }
+    
+    box.innerText = msg;
+}
     </script>
 </body>
 </html>
